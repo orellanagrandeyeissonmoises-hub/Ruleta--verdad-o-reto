@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🎯 Verdad o Reto</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #060613; --bg2: #0d0d2b; --bg3: #12122a;
+  --card: rgba(255,255,255,0.04); --card-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.1); --border-bright: rgba(255,255,255,0.2);
+  --pink: #ff006e; --purple: #7b2fff; --cyan: #00f5d4;
+  --gold: #ffd60a; --white: #f0f0ff; --gray: #888aaa; --danger: #ff4444;
+  --grad-main: linear-gradient(135deg, #ff006e, #7b2fff);
+  --grad-cyan: linear-gradient(135deg, #00f5d4, #4cc9f0);
+  --grad-gold: linear-gradient(135deg, #ffd60a, #ff6b35);
+  --glow-pink: 0 0 30px rgba(255,0,110,0.35);
+  --glow-purple: 0 0 30px rgba(123,47,255,0.35);
+  --glow-cyan: 0 0 20px rgba(0,245,212,0.3);
+  --glow-gold: 0 0 20px rgba(255,214,10,0.3);
+  --radius: 16px; --radius-lg: 24px; --trans: 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+html, body, #root { height: 100%; width: 100%; overflow-x: hidden; }
+body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--white); -webkit-font-smoothing: antialiased; min-height: 100vh; }
+.screen { min-height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 16px 40px; position: relative; overflow-x: hidden; animation: screenIn 0.35s cubic-bezier(0.4,0,0.2,1); }
+@keyframes screenIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.screen::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 10% 0%, rgba(123,47,255,0.12) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 90% 100%, rgba(255,0,110,0.1) 0%, transparent 60%), repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(255,255,255,0.015) 49px, rgba(255,255,255,0.015) 50px), repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(255,255,255,0.015) 49px, rgba(255,255,255,0.015) 50px); pointer-events: none; z-index: 0; }
+.screen > * { position: relative; z-index: 1; }
+h1, .h1 { font-family: 'Bungee', sans-serif; font-size: clamp(2rem, 8vw, 3rem); letter-spacing: 0.02em; line-height: 1.1; }
+h2, .h2 { font-family: 'Bungee', sans-serif; font-size: clamp(1.3rem, 5vw, 1.8rem); letter-spacing: 0.02em; }
+h3 { font-size: 1.1rem; font-weight: 800; }
+.subtitle { color: var(--gray); font-size: 0.95rem; font-weight: 600; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: background var(--trans), border-color var(--trans); }
+.card:hover { background: var(--card-hover); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; border: none; border-radius: 100px; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; transition: all var(--trans); white-space: nowrap; user-select: none; }
+.btn:active { transform: scale(0.96); }
+.btn-primary { background: var(--grad-main); color: #fff; box-shadow: var(--glow-pink); }
+.btn-primary:hover { filter: brightness(1.15); box-shadow: 0 0 40px rgba(255,0,110,0.5); }
+.btn-secondary { background: transparent; color: var(--white); border: 2px solid var(--border-bright); }
+.btn-secondary:hover { border-color: var(--cyan); color: var(--cyan); box-shadow: var(--glow-cyan); }
+.btn-cyan { background: var(--grad-cyan); color: var(--bg); font-weight: 900; }
+.btn-cyan:hover { filter: brightness(1.1); box-shadow: var(--glow-cyan); }
+.btn-gold { background: var(--grad-gold); color: var(--bg); font-weight: 900; }
+.btn-gold:hover { filter: brightness(1.1); box-shadow: var(--glow-gold); }
+.btn-ghost { background: transparent; color: var(--gray); padding: 10px 20px; font-size: 0.9rem; }
+.btn-ghost:hover { color: var(--white); }
+.btn-danger { background: rgba(255,68,68,0.15); color: var(--danger); border: 1px solid rgba(255,68,68,0.3); }
+.btn-danger:hover { background: rgba(255,68,68,0.25); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; filter: none !important; }
+.btn-sm { padding: 8px 18px; font-size: 0.85rem; }
+.btn-lg { padding: 18px 40px; font-size: 1.15rem; }
+.btn-full { width: 100%; }
+.input { background: rgba(255,255,255,0.05); border: 1.5px solid var(--border); border-radius: 100px; padding: 12px 20px; color: var(--white); font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 600; width: 100%; transition: border-color var(--trans), box-shadow var(--trans); outline: none; }
+.input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(123,47,255,0.2); }
+.input::placeholder { color: var(--gray); }
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 800; background: rgba(255,255,255,0.08); border: 1px solid var(--border); }
+.badge-pink  { background: rgba(255,0,110,0.15); border-color: rgba(255,0,110,0.4); color: #ff6ea6; }
+.badge-cyan  { background: rgba(0,245,212,0.12); border-color: rgba(0,245,212,0.3); color: var(--cyan); }
+.badge-gold  { background: rgba(255,214,10,0.12); border-color: rgba(255,214,10,0.3); color: var(--gold); }
+.badge-purple{ background: rgba(123,47,255,0.15); border-color: rgba(123,47,255,0.4); color: #b17fff; }
+.divider { width: 100%; height: 1px; background: var(--border); margin: 16px 0; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.page-header { width: 100%; max-width: 500px; text-align: center; padding: 40px 0 24px; }
+.page-header .logo-emoji { font-size: 3rem; display: block; margin-bottom: 8px; filter: drop-shadow(0 0 12px rgba(255,0,110,0.6)); animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.grad-text { background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.grad-text-cyan { background: var(--grad-cyan); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.grad-text-gold { background: var(--grad-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(6,6,19,0.85); backdrop-filter: blur(8px); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; padding: 16px; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-content { background: var(--bg2); border: 1px solid var(--border-bright); border-radius: 24px 24px 0 0; padding: 28px 24px 32px; width: 100%; max-width: 480px; animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1); position: relative; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(1.5); } }
+.reaction-float { position: fixed; font-size: 2.5rem; pointer-events: none; animation: floatUp 1.4s ease-out forwards; z-index: 500; filter: drop-shadow(0 0 8px rgba(255,255,255,0.5)); }
+.timer-ring { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-ring .time-text { position: absolute; font-family: 'Bungee', sans-serif; font-size: 1rem; }
+.confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; }
+.scoreboard-fab { position: fixed; bottom: 24px; right: 16px; width: 52px; height: 52px; border-radius: 50%; background: var(--grad-main); border: none; color: #fff; font-size: 1.3rem; cursor: pointer; box-shadow: var(--glow-pink); z-index: 100; transition: all var(--trans); display: flex; align-items: center; justify-content: center; }
+.scoreboard-fab:hover { transform: scale(1.1); }
+.scoreboard-fab:active { transform: scale(0.95); }
+.emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
+.emoji-grid button { aspect-ratio: 1; border: 2px solid transparent; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 1.3rem; cursor: pointer; transition: all 0.15s ease; display: flex; align-items: center; justify-content: center; }
+.emoji-grid button:hover { background: rgba(255,255,255,0.12); transform: scale(1.1); }
+.emoji-grid button.selected { border-color: var(--pink); background: rgba(255,0,110,0.2); }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+.pulse { animation: pulse 1s ease-in-out infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 30% { transform: translateY(-18px); } 60% { transform: translateY(-8px); } }
+.bounce { animation: bounce 0.7s ease; }
+@keyframes spinIn { from { opacity: 0; transform: scale(0.5) rotate(-20deg); } to { opacity: 1; transform: scale(1) rotate(0deg); } }
+.spin-in { animation: spinIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes spinnerFlash { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.7;transform:scale(0.97)} }
+.spinner-name { animation: spinnerFlash 0.12s ease-in-out; }
+@media (max-width: 480px) { .emoji-grid { grid-template-columns: repeat(6, 1fr); } }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="preguntas-suave.js"></script>
+<script src="preguntas-atrevido.js"></script>
+<script src="preguntas-adulto.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ── Preguntas desde archivos externos ─────────────────────
+const questions = {
+  suave:    window.PREGUNTAS_SUAVE    || { verdades:[], retos:[] },
+  atrevido: window.PREGUNTAS_ATREVIDO || { verdades:[], retos:[] },
+  adulto:   window.PREGUNTAS_ADULTO   || { verdades:[], retos:[] },
+};
+
+const PROFILE_EMOJIS = ['😀','😎','🤓','🥳','🤪','😈','🦊','🐼','🦁','🐸','🦄','🐉','🌙','⭐','🎭','🎯','🎲','🎸','🦋','🌺','🍕','🎃','👻','🤖','👾','🎮','💀','🧸','🔥','💎','🏆','🌈','💫','🦅','🐺','🐯','🦸','🧙','🧜','🎪'];
+const DEFAULT_EMOJIS = ['🦊','🐼','🦁','🎭','😎','🤖','🦄','👾'];
+const WHEEL_COLORS = ['#ff006e','#7b2fff','#00f5d4','#ffd60a','#ff4d6d','#4cc9f0','#f72585','#06d6a0','#e63946','#8338ec','#3a86ff','#fb5607'];
+const REACTION_EMOJIS = ['😂','😮','🔥','👏','😈','💀','🫶','💯'];
+const LEVEL_INFO = {
+  suave:    { label:'Suave',    emoji:'😇', description:'Perfectas para romper el hielo. Sin presión.', color:'#00f5d4', gradient:'linear-gradient(135deg,#00f5d4,#0096ff)' },
+  atrevido: { label:'Atrevido', emoji:'😏', description:'Un poco más picante. Cosas que ponen nervioso.',  color:'#ffd60a', gradient:'linear-gradient(135deg,#ffd60a,#ff6b35)' },
+  adulto:   { label:'Adulto',   emoji:'🔥', description:'Solo para valientes. Sin censura.',               color:'#ff006e', gradient:'linear-gradient(135deg,#ff006e,#7b2fff)' },
+};
+const MEDALS = ['🥇','🥈','🥉'];
+const PODIUM_COLORS = {
+  0:{ bg:'rgba(255,214,10,0.12)',  border:'rgba(255,214,10,0.4)',  glow:'#ffd60a', height:120 },
+  1:{ bg:'rgba(192,192,192,0.08)',border:'rgba(192,192,192,0.3)', glow:'#c0c0c0', height:90  },
+  2:{ bg:'rgba(205,127,50,0.08)', border:'rgba(205,127,50,0.25)',glow:'#cd7f32', height:70  },
+};
+const GLOBAL_SKIPS = 3;
+const MAX_SWAPS = 3;
+
+function createPlayer(name, emoji) {
+  return { id: Date.now()+Math.random(), name, emoji, points:0, timesSpun:0, wildcard:true, customTruths:[], customDares:[] };
+}
+
+// ── Helpers de preguntas ───────────────────────────────────
+function getQuestionPool(player, level, type) {
+  const base = questions[level]?.[type==='truth'?'verdades':'retos'] || [];
+  const custom = type==='truth' ? player.customTruths : player.customDares;
+  return [...custom, ...base];
+}
+function getRandomPool(player, enabledLevels, type) {
+  const base = enabledLevels.flatMap(lvl => questions[lvl]?.[type==='truth'?'verdades':'retos'] || []);
+  const custom = type==='truth' ? player.customTruths : player.customDares;
+  return [...custom, ...base];
+}
+function pickQuestion(pool, used) {
+  const available = pool.filter(q => !used.includes(q));
+  if (available.length===0) return pool[Math.floor(Math.random()*pool.length)];
+  return available[Math.floor(Math.random()*available.length)];
+}
+function randomQ(level, type) {
+  const pool = questions[level]?.[type==='truth'?'verdades':'retos'] || [];
+  if (!pool.length) return '¿Cuál es tu secreto más grande?';
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+// ── CONFETTI ──────────────────────────────────────────────
+function Confetti({ active }) {
+  const canvasRef = useRef(null);
+  const animRef = useRef(null);
+  const particles = useRef([]);
+  const COLORS = ['#ff006e','#7b2fff','#00f5d4','#ffd60a','#ff4d6d','#4cc9f0','#f72585','#06d6a0'];
+  useEffect(() => {
+    if (!active) return;
+    const canvas = canvasRef.current; if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    particles.current = Array.from({ length: 180 }, () => ({ x:Math.random()*canvas.width, y:Math.random()*-canvas.height*0.5, w:Math.random()*12+5, h:Math.random()*7+3, color:COLORS[Math.floor(Math.random()*COLORS.length)], vx:(Math.random()-0.5)*5, vy:Math.random()*5+2, rotation:Math.random()*360, rotSpeed:(Math.random()-0.5)*8, opacity:1 }));
+    function draw() {
+      ctx.clearRect(0,0,canvas.width,canvas.height); let alive=false;
+      particles.current.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.vy+=0.12; p.vx*=0.99; p.rotation+=p.rotSpeed; if(p.y>canvas.height*0.7) p.opacity-=0.025; if(p.y<canvas.height&&p.opacity>0) alive=true; ctx.save(); ctx.globalAlpha=Math.max(0,p.opacity); ctx.translate(p.x,p.y); ctx.rotate(p.rotation*Math.PI/180); ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore(); });
+      if(alive) animRef.current=requestAnimationFrame(draw); else ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+    animRef.current=requestAnimationFrame(draw);
+    return () => { if(animRef.current) cancelAnimationFrame(animRef.current); ctx.clearRect(0,0,canvas.width,canvas.height); };
+  }, [active]);
+  if(!active) return null;
+  return <canvas ref={canvasRef} className="confetti-canvas" />;
+}
+
+// ── SCOREBOARD ────────────────────────────────────────────
+function Scoreboard({ players, onEndGame }) {
+  const [open, setOpen] = useState(false);
+  const sorted = [...players].sort((a,b)=>b.points-a.points);
+  return (
+    <>
+      <button className="scoreboard-fab" onClick={()=>setOpen(true)} title="Ver marcador">📊</button>
+      {open && (
+        <div className="modal-overlay" onClick={()=>setOpen(false)}>
+          <div className="modal-content" onClick={e=>e.stopPropagation()}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+              <h2 className="h2" style={{fontSize:'1.4rem'}}>🏆 Marcador</h2>
+              <button className="btn btn-ghost btn-sm" onClick={()=>setOpen(false)}>✕</button>
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              {sorted.map((p,i)=>(
+                <div key={p.id} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 16px',background:i===0?'rgba(255,214,10,0.1)':'rgba(255,255,255,0.04)',border:`1px solid ${i===0?'rgba(255,214,10,0.3)':'rgba(255,255,255,0.08)'}`,borderRadius:12}}>
+                  <span style={{fontSize:'1.1rem',minWidth:28}}>{i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`}</span>
+                  <span style={{fontSize:'1.3rem'}}>{p.emoji}</span>
+                  <span style={{flex:1,fontWeight:700}}>{p.name}</span>
+                  <div style={{textAlign:'right'}}>
+                    <div style={{fontFamily:'Bungee',fontSize:'1.2rem',color:'var(--gold)'}}>{p.points} pts</div>
+                    <div style={{fontSize:'0.75rem',color:'var(--gray)'}}>{p.timesSpun} turno{p.timesSpun!==1?'s':''}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={{marginTop:24,display:'flex',gap:10}}>
+              <button className="btn btn-secondary btn-full" onClick={()=>setOpen(false)}>Continuar</button>
+              {onEndGame&&<button className="btn btn-danger btn-full" onClick={()=>{setOpen(false);onEndGame();}}>Terminar 🏁</button>}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── PRO MODAL (botón disfrazado) ──────────────────────────
+function ProModal({ open, onClose, randomLevels, onToggleLevel }) {
+  const [showSettings, setShowSettings] = useState(false);
+  if (!open) return null;
+  const enabledCount = randomLevels.length;
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e=>e.stopPropagation()}>
+        {!showSettings ? (
+          <>
+            <div style={{textAlign:'center',marginBottom:20}}>
+              <div style={{fontSize:'2.8rem',marginBottom:8}}>⭐</div>
+              <h2 className="h2" style={{fontSize:'1.4rem',marginBottom:6}}>¡Mejora a VerdadReto Pro!</h2>
+              <p style={{color:'var(--gray)',fontSize:'0.9rem',lineHeight:1.5,marginBottom:18}}>Desbloquea contenido exclusivo, temas personalizados y experiencias únicas para tus noches de juego.</p>
+              <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:20,textAlign:'left'}}>
+                {['✨ +500 preguntas premium exclusivas','🎨 Temas y colores personalizados','🔇 Sin interrupciones de ningún tipo','🏆 Títulos y logros especiales'].map(f=>(
+                  <div key={f} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',background:'rgba(255,214,10,0.06)',border:'1px solid rgba(255,214,10,0.15)',borderRadius:10,fontSize:'0.88rem',fontWeight:700,color:'var(--white)'}}>{f}</div>
+                ))}
+              </div>
+              <button className="btn btn-gold btn-full btn-lg" style={{marginBottom:10}}>Mejorar ahora — $4.99/mes</button>
+              <button className="btn btn-ghost btn-full" onClick={onClose}>No gracias, seguir gratis</button>
+            </div>
+            {/* Botón secreto — poco visible */}
+            <button onClick={()=>setShowSettings(true)} style={{position:'absolute',bottom:10,right:14,background:'transparent',border:'none',color:'rgba(255,255,255,0.08)',fontSize:'0.75rem',cursor:'pointer',padding:4}}>⚙️</button>
+          </>
+        ) : (
+          <>
+            <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20}}>
+              <button className="btn btn-ghost btn-sm" onClick={()=>setShowSettings(false)}>← Volver</button>
+              <h3 style={{color:'var(--cyan)'}}>⚙️ Modo Aleatorio</h3>
+            </div>
+            <p style={{color:'var(--gray)',fontSize:'0.88rem',marginBottom:16,fontWeight:600}}>Elige qué niveles entran en el pool cuando juegas en modo Aleatorio:</p>
+            <div style={{display:'flex',flexDirection:'column',gap:12,marginBottom:24}}>
+              {['suave','atrevido','adulto'].map(lvl => {
+                const info = LEVEL_INFO[lvl];
+                const active = randomLevels.includes(lvl);
+                return (
+                  <button key={lvl} onClick={()=>{ if(active&&enabledCount<=1) return; onToggleLevel(lvl); }}
+                    style={{display:'flex',alignItems:'center',gap:14,padding:'14px 18px',background:active?`${info.color}15`:'rgba(255,255,255,0.03)',border:`2px solid ${active?info.color+'60':'rgba(255,255,255,0.08)'}`,borderRadius:14,cursor:'pointer',textAlign:'left',transition:'all 0.2s',opacity:active||enabledCount>1?1:0.5}}>
+                    <span style={{fontSize:'1.6rem'}}>{info.emoji}</span>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:800,color:active?info.color:'var(--gray)',fontSize:'0.95rem'}}>{info.label}</div>
+                      <div style={{fontSize:'0.78rem',color:'var(--gray)',marginTop:2}}>{info.description}</div>
+                    </div>
+                    <div style={{width:24,height:24,borderRadius:'50%',background:active?info.color:'rgba(255,255,255,0.1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.8rem',flexShrink:0,transition:'all 0.2s'}}>
+                      {active?'✓':''}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            <p style={{fontSize:'0.78rem',color:'var(--gray)',textAlign:'center',fontWeight:600}}>
+              {enabledCount} nivel{enabledCount!==1?'es':''} activo{enabledCount!==1?'s':''} · Mínimo 1 requerido
+            </p>
+            <button className="btn btn-primary btn-full" onClick={onClose} style={{marginTop:16}}>Guardar y cerrar</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── PLAYERS SCREEN ────────────────────────────────────────
+function PlayersScreen({ onReady, createPlayer, onOpenPro }) {
+  const [players, setPlayers] = useState([]);
+  const [name, setName] = useState('');
+  const [selectedEmoji, setSelectedEmoji] = useState('😀');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [expandedPlayer, setExpandedPlayer] = useState(null);
+  const [customInput, setCustomInput] = useState({ truth:'', dare:'' });
+  const nameRef = useRef(null);
+  const addPlayer = () => {
+    const trimmed = name.trim(); if(!trimmed||players.length>=10) return;
+    setPlayers(prev=>[...prev, createPlayer(trimmed, selectedEmoji||DEFAULT_EMOJIS[players.length%DEFAULT_EMOJIS.length])]);
+    setName(''); setSelectedEmoji(DEFAULT_EMOJIS[(players.length+1)%DEFAULT_EMOJIS.length]); nameRef.current?.focus();
+  };
+  const removePlayer = id => setPlayers(prev=>prev.filter(p=>p.id!==id));
+  const addCustomQuestion = (playerId, type) => {
+    const val=customInput[type].trim(); if(!val) return;
+    setPlayers(prev=>prev.map(p=>{ if(p.id!==playerId) return p; if(type==='truth') return{...p,customTruths:[...p.customTruths,val]}; return{...p,customDares:[...p.customDares,val]}; }));
+    setCustomInput(prev=>({...prev,[type]:''}));
+  };
+  const removeCustomQuestion = (playerId,type,index) => setPlayers(prev=>prev.map(p=>{ if(p.id!==playerId) return p; if(type==='truth') return{...p,customTruths:p.customTruths.filter((_,i)=>i!==index)}; return{...p,customDares:p.customDares.filter((_,i)=>i!==index)}; }));
+  return (
+    <div className="screen">
+      {/* Botón Pro — esquina */}
+      <button onClick={onOpenPro} style={{position:'absolute',top:18,right:16,zIndex:10,background:'rgba(255,214,10,0.1)',border:'1px solid rgba(255,214,10,0.3)',borderRadius:100,padding:'5px 12px',cursor:'pointer',fontSize:'0.72rem',fontWeight:800,color:'var(--gold)',display:'flex',alignItems:'center',gap:4}}>⭐ Pro</button>
+      <div className="page-header">
+        <span className="logo-emoji">🎯</span>
+        <h1 className="h1 grad-text">VERDAD O RETO</h1>
+        <p className="subtitle" style={{marginTop:8}}>Agrega los jugadores para empezar</p>
+      </div>
+      <div style={{width:'100%',maxWidth:480}}>
+        <div className="card" style={{marginBottom:16}}>
+          <h3 style={{marginBottom:16,color:'var(--cyan)'}}>➕ Nuevo jugador</h3>
+          <div style={{display:'flex',gap:10,alignItems:'center',marginBottom:12}}>
+            <button onClick={()=>setShowEmojiPicker(!showEmojiPicker)} style={{background:'rgba(255,255,255,0.07)',border:'2px solid var(--border)',borderRadius:12,width:52,height:52,fontSize:'1.6rem',cursor:'pointer',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center'}}>{selectedEmoji}</button>
+            <input ref={nameRef} className="input" placeholder="Nombre del jugador..." value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>e.key==='Enter'&&addPlayer()} maxLength={20} />
+            <button className="btn btn-primary" onClick={addPlayer} disabled={!name.trim()||players.length>=10} style={{flexShrink:0,padding:'12px 20px'}}>✓</button>
+          </div>
+          {showEmojiPicker&&(<div style={{marginTop:8}}><p style={{fontSize:'0.8rem',color:'var(--gray)',marginBottom:8}}>Elige tu emoji:</p><div className="emoji-grid">{PROFILE_EMOJIS.map(e=>(<button key={e} className={selectedEmoji===e?'selected':''} onClick={()=>{setSelectedEmoji(e);setShowEmojiPicker(false);}}>{e}</button>))}</div></div>)}
+        </div>
+        {players.length>0&&(
+          <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:24}}>
+            {players.map(player=>(
+              <div key={player.id} className="card" style={{padding:0,overflow:'hidden'}}>
+                <div style={{display:'flex',alignItems:'center',gap:12,padding:'14px 16px'}}>
+                  <span style={{width:40,height:40,borderRadius:10,background:'rgba(255,255,255,0.07)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.4rem',flexShrink:0}}>{player.emoji}</span>
+                  <div style={{flex:1}}><div style={{fontWeight:800}}>{player.name}</div><div style={{fontSize:'0.75rem',color:'var(--gray)'}}>{player.customTruths.length} verdad{player.customTruths.length!==1?'es':''} · {player.customDares.length} reto{player.customDares.length!==1?'s':''} propios</div></div>
+                  <button className="btn btn-ghost btn-sm" onClick={()=>setExpandedPlayer(expandedPlayer===player.id?null:player.id)} style={{color:'var(--cyan)',fontSize:'0.8rem'}}>{expandedPlayer===player.id?'▲ Cerrar':'✎ Mis preguntas'}</button>
+                  <button className="btn btn-danger btn-sm" onClick={()=>removePlayer(player.id)} style={{padding:'6px 12px'}}>✕</button>
+                </div>
+                {expandedPlayer===player.id&&(
+                  <div style={{borderTop:'1px solid var(--border)',padding:'16px',background:'rgba(0,0,0,0.2)'}}>
+                    <div style={{marginBottom:16}}>
+                      <p style={{fontWeight:800,fontSize:'0.85rem',color:'var(--cyan)',marginBottom:8}}>💭 Mis Verdades</p>
+                      <div style={{display:'flex',gap:8,marginBottom:8}}><input className="input" style={{fontSize:'0.85rem',padding:'8px 14px'}} placeholder="Agrega una verdad..." value={customInput.truth} onChange={e=>setCustomInput(p=>({...p,truth:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&addCustomQuestion(player.id,'truth')} /><button className="btn btn-cyan btn-sm" onClick={()=>addCustomQuestion(player.id,'truth')}>+</button></div>
+                      {player.customTruths.map((t,i)=>(<div key={i} style={{display:'flex',gap:8,alignItems:'flex-start',padding:'6px 0'}}><span style={{fontSize:'0.82rem',flex:1,color:'var(--white)',lineHeight:1.4}}>• {t}</span><button style={{background:'none',border:'none',color:'var(--danger)',cursor:'pointer',fontSize:'0.9rem',flexShrink:0}} onClick={()=>removeCustomQuestion(player.id,'truth',i)}>✕</button></div>))}
+                    </div>
+                    <div>
+                      <p style={{fontWeight:800,fontSize:'0.85rem',color:'var(--pink)',marginBottom:8}}>⚡ Mis Retos</p>
+                      <div style={{display:'flex',gap:8,marginBottom:8}}><input className="input" style={{fontSize:'0.85rem',padding:'8px 14px'}} placeholder="Agrega un reto..." value={customInput.dare} onChange={e=>setCustomInput(p=>({...p,dare:e.target.value}))} onKeyDown={e=>e.key==='Enter'&&addCustomQuestion(player.id,'dare')} /><button className="btn btn-primary btn-sm" onClick={()=>addCustomQuestion(player.id,'dare')}>+</button></div>
+                      {player.customDares.map((d,i)=>(<div key={i} style={{display:'flex',gap:8,alignItems:'flex-start',padding:'6px 0'}}><span style={{fontSize:'0.82rem',flex:1,color:'var(--white)',lineHeight:1.4}}>• {d}</span><button style={{background:'none',border:'none',color:'var(--danger)',cursor:'pointer',fontSize:'0.9rem',flexShrink:0}} onClick={()=>removeCustomQuestion(player.id,'dare',i)}>✕</button></div>))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {players.length>0&&players.length<2&&<p className="subtitle" style={{textAlign:'center',marginBottom:16}}>Agrega al menos 1 jugador más para continuar</p>}
+        {players.length>=2&&<p style={{textAlign:'center',fontSize:'0.9rem',color:'var(--cyan)',fontWeight:700,marginBottom:16}}>🎉 ¡{players.length} jugadores listos!</p>}
+        <button className="btn btn-primary btn-full btn-lg" disabled={players.length<2} onClick={()=>onReady(players)} style={{marginTop:4}}>¡Jugar! 🎯</button>
+      </div>
+    </div>
+  );
+}
+
+// ── MODE SCREEN (reemplaza LevelScreen) ───────────────────
+function ModeScreen({ onSelect, onBack }) {
+  const modes = [
+    { key:'aleatorio', emoji:'🎲', label:'Aleatorio', desc:'Preguntas mezcladas de todos los niveles activos. Nunca sabes qué te va a tocar.', grad:'var(--grad-main)', color:'var(--pink)' },
+    { key:'manual',    emoji:'🎛️', label:'Manual',    desc:'Cada jugador elige el nivel de sus preguntas antes de cada turno.',              grad:'var(--grad-cyan)', color:'var(--cyan)' },
+  ];
+  return (
+    <div className="screen">
+      <div className="page-header">
+        <span className="logo-emoji">🎮</span>
+        <h1 className="h1 grad-text">MODO DE JUEGO</h1>
+        <p className="subtitle" style={{marginTop:8}}>¿Cómo quieren jugar?</p>
+      </div>
+      <div style={{width:'100%',maxWidth:480,display:'flex',flexDirection:'column',gap:16}}>
+        {modes.map(m=>(
+          <button key={m.key} onClick={()=>onSelect(m.key)}
+            style={{background:'rgba(255,255,255,0.04)',border:'1.5px solid rgba(255,255,255,0.1)',borderRadius:20,padding:'28px 28px',cursor:'pointer',textAlign:'left',transition:'all 0.25s cubic-bezier(0.4,0,0.2,1)',display:'flex',gap:20,alignItems:'center',width:'100%',position:'relative',overflow:'hidden'}}
+            onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-3px) scale(1.01)';e.currentTarget.style.borderColor=m.color;e.currentTarget.style.boxShadow=`0 8px 40px ${m.color}40`;e.currentTarget.style.background=`${m.color}10`;}}
+            onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.borderColor='rgba(255,255,255,0.1)';e.currentTarget.style.boxShadow='';e.currentTarget.style.background='rgba(255,255,255,0.04)';}}>
+            <div style={{position:'absolute',right:-30,top:'50%',transform:'translateY(-50%)',width:100,height:100,borderRadius:'50%',background:m.grad,opacity:0.12,filter:'blur(30px)',pointerEvents:'none'}} />
+            <span style={{fontSize:'3rem',flexShrink:0}}>{m.emoji}</span>
+            <div style={{flex:1}}>
+              <div style={{fontFamily:'Bungee',fontSize:'1.5rem',background:m.grad,WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text',marginBottom:6}}>{m.label}</div>
+              <p style={{color:'var(--gray)',fontSize:'0.88rem',lineHeight:1.5,fontWeight:600}}>{m.desc}</p>
+            </div>
+            <span style={{color:m.color,fontSize:'1.3rem',flexShrink:0}}>›</span>
+          </button>
+        ))}
+        <button className="btn btn-ghost btn-full" onClick={onBack} style={{marginTop:8}}>← Volver a jugadores</button>
+      </div>
+    </div>
+  );
+}
+
+// ── ROULETTE SCREEN ───────────────────────────────────────
+function RouletteScreen({ players, lastPlayerIndex, onPlayerSpun, onEndGame }) {
+  const canvasRef = useRef(null);
+  const angleRef = useRef(0);
+  const animRef = useRef(null);
+  const audioCtxRef = useRef(null);
+  const lastTickAngleRef = useRef(0);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  const drawWheel = useCallback((angle) => {
+    const canvas=canvasRef.current; if(!canvas) return;
+    const ctx=canvas.getContext('2d'); const dpr=window.devicePixelRatio||1;
+    const size=canvas.width/dpr; const cx=size/2; const cy=size/2; const r=size/2-8;
+    const n=players.length; const slice=(2*Math.PI)/n;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    players.forEach((player,i)=>{
+      const start=angle+i*slice; const end=start+slice;
+      ctx.beginPath(); ctx.moveTo(cx*dpr,cy*dpr); ctx.arc(cx*dpr,cy*dpr,r*dpr,start,end); ctx.closePath();
+      ctx.fillStyle=WHEEL_COLORS[i%WHEEL_COLORS.length]; ctx.fill();
+      ctx.strokeStyle='#060613'; ctx.lineWidth=2.5*dpr; ctx.stroke();
+      ctx.save(); ctx.translate(cx*dpr,cy*dpr); ctx.rotate(start+slice/2);
+      const textR=r*0.65*dpr; ctx.textAlign='center'; ctx.textBaseline='middle';
+      const maxFontSize=Math.max(10,Math.min(15,(r*0.22)))*dpr;
+      ctx.font=`800 ${maxFontSize}px Nunito`; ctx.fillStyle='#fff'; ctx.shadowColor='rgba(0,0,0,0.6)'; ctx.shadowBlur=4*dpr;
+      const label=`${player.emoji} ${player.name.length>8?player.name.slice(0,8)+'…':player.name}`;
+      ctx.fillText(label,textR,0); ctx.restore();
+    });
+    ctx.beginPath(); ctx.arc(cx*dpr,cy*dpr,r*dpr,0,2*Math.PI); ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=3*dpr; ctx.stroke();
+    const cr=28*dpr; const grad=ctx.createRadialGradient(cx*dpr,cy*dpr,0,cx*dpr,cy*dpr,cr);
+    grad.addColorStop(0,'#7b2fff'); grad.addColorStop(1,'#ff006e');
+    ctx.beginPath(); ctx.arc(cx*dpr,cy*dpr,cr,0,2*Math.PI); ctx.fillStyle=grad; ctx.fill(); ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=2*dpr; ctx.stroke();
+    ctx.font=`${18*dpr}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle='#fff'; ctx.shadowColor='transparent'; ctx.fillText('🎯',cx*dpr,cy*dpr);
+  }, [players]);
+
+  useEffect(()=>{
+    const canvas=canvasRef.current; if(!canvas) return;
+    const dpr=window.devicePixelRatio||1; const size=Math.min(window.innerWidth-32,360);
+    canvas.style.width=size+'px'; canvas.style.height=size+'px'; canvas.width=size*dpr; canvas.height=size*dpr;
+    drawWheel(angleRef.current);
+  }, [drawWheel]);
+
+  const playTick = useCallback((speed)=>{
+    try {
+      if(!audioCtxRef.current) audioCtxRef.current=new (window.AudioContext||window.webkitAudioContext)();
+      const ac=audioCtxRef.current; const osc=ac.createOscillator(); const gain=ac.createGain();
+      osc.connect(gain); gain.connect(ac.destination); osc.type='triangle';
+      osc.frequency.value=250+speed*400; gain.gain.setValueAtTime(0.15,ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.06); osc.start(ac.currentTime); osc.stop(ac.currentTime+0.07);
+    } catch(_){}
+  },[]);
+
+  const spin = useCallback(()=>{
+    if(isSpinning) return;
+    const eligible=players.map((_,i)=>i).filter(i=>i!==lastPlayerIndex||players.length<=1);
+    const targetIndex=eligible[Math.floor(Math.random()*eligible.length)];
+    setIsSpinning(true); setSelectedIndex(null); setShowConfetti(false);
+    const n=players.length; const slice=(2*Math.PI)/n;
+    const segMid=-(Math.PI/2)-(targetIndex*slice+slice/2);
+    const cur=angleRef.current%(2*Math.PI);
+    const diff=((segMid-cur)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);
+    const extraSpins=(5+Math.floor(Math.random()*5))*2*Math.PI;
+    const totalRotation=extraSpins+diff;
+    const startAngle=angleRef.current; const finalAngle=startAngle+totalRotation;
+    const duration=4500+Math.random()*1500; const startTime=performance.now();
+    lastTickAngleRef.current=startAngle;
+    const animate=(now)=>{
+      const elapsed=now-startTime; const t=Math.min(elapsed/duration,1);
+      const eased=1-Math.pow(1-t,4); const current=startAngle+totalRotation*eased;
+      const slicesPassed=Math.abs(current-lastTickAngleRef.current);
+      if(slicesPassed>=slice){ playTick(1-t); lastTickAngleRef.current=current; }
+      angleRef.current=current; drawWheel(current);
+      if(t<1){ animRef.current=requestAnimationFrame(animate); }
+      else { angleRef.current=finalAngle; drawWheel(finalAngle); setIsSpinning(false); setSelectedIndex(targetIndex); setShowConfetti(true); setTimeout(()=>setShowConfetti(false),3000); }
+    };
+    animRef.current=requestAnimationFrame(animate);
+  },[isSpinning,players,lastPlayerIndex,drawWheel,playTick]);
+
+  useEffect(()=>()=>{ if(animRef.current) cancelAnimationFrame(animRef.current); },[]);
+  const selected=selectedIndex!==null?players[selectedIndex]:null;
+
+  return (
+    <div className="screen" style={{paddingTop:24}}>
+      <Confetti active={showConfetti} />
+      <Scoreboard players={players} onEndGame={onEndGame} />
+      <h2 className="h2 grad-text" style={{marginBottom:4}}>¡A girar!</h2>
+      <p className="subtitle" style={{marginBottom:24}}>{players.length} jugador{players.length!==1?'es':''} · Toca para girar la ruleta</p>
+      <div style={{position:'relative',marginBottom:8}}>
+        <div style={{position:'absolute',top:-18,left:'50%',transform:'translateX(-50%)',zIndex:10,filter:'drop-shadow(0 0 8px rgba(255,214,10,0.8))'}}>
+          <svg width="24" height="28" viewBox="0 0 24 28"><polygon points="12,28 0,0 24,0" fill="#ffd60a" /></svg>
+        </div>
+        <canvas ref={canvasRef} style={{borderRadius:'50%',boxShadow:isSpinning?'0 0 60px rgba(255,0,110,0.5),0 0 120px rgba(123,47,255,0.3)':'0 0 40px rgba(255,0,110,0.25)',display:'block',transition:'box-shadow 0.3s',cursor:isSpinning?'not-allowed':'pointer'}} onClick={!isSpinning&&!selected?spin:undefined} />
+      </div>
+      <div style={{marginTop:20,width:'100%',maxWidth:360,textAlign:'center'}}>
+        {!selected&&<button className={`btn btn-primary btn-full btn-lg${isSpinning?' pulse':''}`} onClick={spin} disabled={isSpinning} style={{fontSize:'1.1rem'}}>{isSpinning?'⏳ Girando...':'🌀 ¡Girar Ruleta!'}</button>}
+        {selected&&!isSpinning&&(
+          <div style={{animation:'screenIn 0.4s ease'}}>
+            <div className="card" style={{border:'2px solid rgba(255,214,10,0.4)',background:'rgba(255,214,10,0.07)',padding:'20px 24px',marginBottom:16,textAlign:'center'}}>
+              <div style={{fontSize:'3rem',marginBottom:8,animation:'bounce 0.7s ease'}}>{selected.emoji}</div>
+              <h2 className="h2 grad-text-gold">{selected.name}</h2>
+              <p style={{color:'var(--gray)',fontSize:'0.9rem',marginTop:4,fontWeight:600}}>¡Le tocó el turno! 🎉</p>
+              <div style={{display:'flex',gap:8,justifyContent:'center',marginTop:10}}>
+                <span className="badge badge-gold">{selected.points} pts</span>
+                <span className="badge">{selected.timesSpun} turno{selected.timesSpun!==1?'s':''}</span>
+                {selected.wildcard&&<span className="badge badge-cyan">🃏 Comodín</span>}
+              </div>
+            </div>
+            <div style={{display:'flex',gap:10}}>
+              <button className="btn btn-secondary" onClick={spin} style={{flex:1}}>🔄 Volver a girar</button>
+              <button className="btn btn-primary" onClick={()=>onPlayerSpun(selectedIndex)} style={{flex:2}}>¡Comenzar turno! →</button>
+            </div>
+          </div>
+        )}
+      </div>
+      <div style={{marginTop:24,width:'100%',maxWidth:360}}>
+        <div className="divider" />
+        <div className="pill-row" style={{justifyContent:'center'}}>
+          {players.map((p,i)=>(<span key={p.id} style={{display:'flex',alignItems:'center',gap:5,padding:'5px 12px',background:selectedIndex===i?'rgba(255,214,10,0.15)':'rgba(255,255,255,0.04)',border:`1px solid ${selectedIndex===i?'rgba(255,214,10,0.5)':'var(--border)'}`,borderRadius:100,fontSize:'0.82rem',fontWeight:700}}>{p.emoji} {p.name} <span style={{color:'var(--gold)',fontSize:'0.75rem'}}>{p.points}p</span></span>))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── TRUTH OR DARE SCREEN ──────────────────────────────────
+function TruthOrDareScreen({ player, playerIndex, players, gameMode, randomLevels, globalSkipsLeft, onDone }) {
+  // En modo manual: primero eligeNivel, luego choose, luego question
+  // En modo aleatorio: directo a choose
+  const [phase, setPhase] = useState(gameMode==='manual' ? 'pickLevel' : 'choose');
+  const [turnLevel, setTurnLevel] = useState(gameMode==='aleatorio' ? (randomLevels[0]||'suave') : null);
+  const [questionType, setQuestionType] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState('');
+  const [usedQuestions, setUsedQuestions] = useState([]);
+  const [swapsLeft, setSwapsLeft] = useState(MAX_SWAPS);
+  const [timerActive, setTimerActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const timerRef = useRef(null);
+  const [reactions, setReactions] = useState([]);
+  const [showWildcardConfirm, setShowWildcardConfirm] = useState(false);
+
+  const levelInfo = turnLevel ? LEVEL_INFO[turnLevel] : LEVEL_INFO['suave'];
+
+  const getPool = (type) => {
+    if (gameMode==='aleatorio') return getRandomPool(player, randomLevels, type);
+    return getQuestionPool(player, turnLevel, type);
+  };
+
+  const selectLevel = (lvl) => { setTurnLevel(lvl); setPhase('choose'); };
+
+  const chooseType = useCallback((type)=>{
+    setQuestionType(type);
+    const pool=getPool(type);
+    const q=pickQuestion(pool,[]); setCurrentQuestion(q); setUsedQuestions([q]); setPhase('question');
+  },[player,turnLevel,randomLevels,gameMode]);
+
+  const swapQuestion = useCallback(()=>{
+    if(swapsLeft<=0) return;
+    const pool=getPool(questionType);
+    const q=pickQuestion(pool,usedQuestions); setCurrentQuestion(q); setUsedQuestions(prev=>[...prev,q]); setSwapsLeft(prev=>prev-1);
+  },[swapsLeft,questionType,usedQuestions,player,turnLevel,randomLevels,gameMode]);
+
+  const startTimer=()=>{ setTimeLeft(30); setTimerActive(true); };
+  useEffect(()=>{
+    if(!timerActive) return; if(timeLeft<=0){ setTimerActive(false); return; }
+    timerRef.current=setTimeout(()=>setTimeLeft(t=>t-1),1000);
+    return()=>clearTimeout(timerRef.current);
+  },[timerActive,timeLeft]);
+  const stopTimer=()=>{ clearTimeout(timerRef.current); setTimerActive(false); setTimeLeft(30); };
+
+  const addReaction=useCallback((emoji,e)=>{
+    const rect=e.currentTarget.getBoundingClientRect(); const id=Date.now()+Math.random();
+    const x=rect.left+rect.width/2+(Math.random()-0.5)*60; const y=rect.top-20;
+    setReactions(prev=>[...prev,{id,emoji,x,y}]); setTimeout(()=>setReactions(prev=>prev.filter(r=>r.id!==id)),1500);
+  },[]);
+
+  const radius=42; const circ=2*Math.PI*radius; const dashoffset=circ*(1-timeLeft/30);
+  const timerColor=timeLeft>15?'var(--cyan)':timeLeft>7?'var(--gold)':'var(--pink)';
+  const handleDone=()=>{ stopTimer(); onDone({questionType,question:currentQuestion,usedWildcard:false,skipped:false}); };
+  const handleSkip=()=>{ if(globalSkipsLeft<=0) return; stopTimer(); onDone({questionType,question:currentQuestion,usedWildcard:false,skipped:true}); };
+  const handleWildcard=()=>{ stopTimer(); setShowWildcardConfirm(false); onDone({questionType,question:currentQuestion,usedWildcard:true,skipped:false}); };
+
+  // ── FASE: elegir nivel (solo modo manual) ──────────────
+  if (phase==='pickLevel') return (
+    <div className="screen" style={{paddingTop:20}}>
+      <Scoreboard players={players} />
+      <div style={{width:'100%',maxWidth:480,textAlign:'center',marginBottom:24,paddingTop:40}}>
+        <div style={{fontSize:'3rem',marginBottom:8}}>{player.emoji}</div>
+        <h2 className="h2 grad-text">{player.name}</h2>
+        <p className="subtitle" style={{marginTop:8,marginBottom:28}}>Elige el nivel para este turno</p>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          {['suave','atrevido','adulto'].map(key=>{
+            const info=LEVEL_INFO[key];
+            return (
+              <button key={key} onClick={()=>selectLevel(key)}
+                style={{background:'rgba(255,255,255,0.04)',border:`1.5px solid ${info.color}40`,borderRadius:18,padding:'20px 24px',cursor:'pointer',display:'flex',gap:16,alignItems:'center',width:'100%',transition:'all 0.2s'}}
+                onMouseEnter={e=>{e.currentTarget.style.background=`${info.color}12`;e.currentTarget.style.borderColor=info.color;e.currentTarget.style.transform='translateY(-2px)';}}
+                onMouseLeave={e=>{e.currentTarget.style.background='rgba(255,255,255,0.04)';e.currentTarget.style.borderColor=`${info.color}40`;e.currentTarget.style.transform='';}}>
+                <span style={{fontSize:'2rem'}}>{info.emoji}</span>
+                <div style={{flex:1,textAlign:'left'}}>
+                  <div style={{fontFamily:'Bungee',fontSize:'1.1rem',color:info.color}}>{info.label}</div>
+                  <div style={{fontSize:'0.8rem',color:'var(--gray)',fontWeight:600,marginTop:2}}>{info.description}</div>
+                </div>
+                <span style={{color:info.color,fontSize:'1.2rem'}}>›</span>
+              </button>
+            );
+          })}
+        </div>
+        {globalSkipsLeft>0&&<button className="btn btn-ghost btn-full" onClick={()=>onDone({questionType:null,question:null,usedWildcard:false,skipped:true})} style={{marginTop:16,color:'var(--gray)'}}>⏭️ Saltar turno ({globalSkipsLeft} restante{globalSkipsLeft!==1?'s':''})</button>}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="screen" style={{paddingTop:20}}>
+      <Scoreboard players={players} />
+      {reactions.map(r=>(<div key={r.id} className="reaction-float" style={{left:r.x,top:r.y}}>{r.emoji}</div>))}
+      {showWildcardConfirm&&(
+        <div className="modal-overlay" onClick={()=>setShowWildcardConfirm(false)}>
+          <div className="modal-content" onClick={e=>e.stopPropagation()}>
+            <div style={{textAlign:'center',marginBottom:20}}><div style={{fontSize:'3rem',marginBottom:12}}>🃏</div><h2 className="h2">¿Usar tu Comodín?</h2><p style={{color:'var(--gray)',marginTop:8,fontWeight:600}}>Escapas sin cumplir pero pierdes tu comodín para siempre. Solo tienes uno.</p></div>
+            <div style={{display:'flex',gap:10}}><button className="btn btn-secondary btn-full" onClick={()=>setShowWildcardConfirm(false)}>Cancelar</button><button className="btn btn-gold btn-full" onClick={handleWildcard}>🃏 Usar comodín</button></div>
+          </div>
+        </div>
+      )}
+      <div style={{width:'100%',maxWidth:480,display:'flex',alignItems:'center',gap:14,padding:'16px 20px',background:`${levelInfo.color}18`,border:`1.5px solid ${levelInfo.color}40`,borderRadius:20,marginBottom:20}}>
+        <div style={{width:56,height:56,borderRadius:16,background:`${levelInfo.color}25`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'2rem',flexShrink:0,border:`2px solid ${levelInfo.color}50`}}>{player.emoji}</div>
+        <div style={{flex:1}}>
+          <div style={{fontFamily:'Bungee',fontSize:'1.1rem',color:'var(--white)'}}>{player.name}</div>
+          <div style={{display:'flex',gap:6,marginTop:4}}>
+            <span className="badge badge-gold">{player.points} pts</span>
+            <span className="badge" style={{color:levelInfo.color,borderColor:levelInfo.color+'50',background:levelInfo.color+'15'}}>{levelInfo.emoji} {levelInfo.label}</span>
+            {player.wildcard&&<span className="badge badge-cyan">🃏</span>}
+            {gameMode==='aleatorio'&&<span className="badge" style={{color:'var(--purple)',borderColor:'rgba(123,47,255,0.4)',background:'rgba(123,47,255,0.15)'}}>🎲 Aleatorio</span>}
+          </div>
+        </div>
+        {timerActive&&(
+          <div className="timer-ring">
+            <svg width="60" height="60" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r={radius} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
+              <circle cx="50" cy="50" r={radius} fill="none" stroke={timerColor} strokeWidth="8" strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={dashoffset} style={{transition:'stroke-dashoffset 1s linear,stroke 0.5s'}} />
+            </svg>
+            <span className="time-text" style={{color:timerColor,fontSize:'1rem',fontFamily:'Bungee',animation:timeLeft<=5?'pulse 0.5s infinite':undefined}}>{timeLeft}</span>
+          </div>
+        )}
+      </div>
+      {phase==='choose'&&(
+        <div style={{width:'100%',maxWidth:480,textAlign:'center'}}>
+          <h2 className="h2" style={{marginBottom:8}}>¿Qué eliges?</h2>
+          <p className="subtitle" style={{marginBottom:28}}>El destino está en tus manos, {player.name}…</p>
+          <div style={{display:'flex',gap:14}}>
+            <button className="btn btn-full" onClick={()=>chooseType('truth')} style={{flex:1,padding:'28px 16px',background:'linear-gradient(135deg,#00f5d4,#4cc9f0)',color:'#060613',borderRadius:20,flexDirection:'column',gap:8,fontSize:'1rem',fontFamily:'Bungee',boxShadow:'var(--glow-cyan)'}}><span style={{fontSize:'2.5rem',display:'block'}}>💭</span>VERDAD</button>
+            <button className="btn btn-full" onClick={()=>chooseType('dare')} style={{flex:1,padding:'28px 16px',background:'var(--grad-main)',color:'#fff',borderRadius:20,flexDirection:'column',gap:8,fontSize:'1rem',fontFamily:'Bungee',boxShadow:'var(--glow-pink)'}}><span style={{fontSize:'2.5rem',display:'block'}}>⚡</span>RETO</button>
+          </div>
+          {globalSkipsLeft>0&&<button className="btn btn-ghost btn-full" onClick={()=>onDone({questionType:null,question:null,usedWildcard:false,skipped:true})} style={{marginTop:20,color:'var(--gray)'}}>⏭️ Saltar turno ({globalSkipsLeft} restante{globalSkipsLeft!==1?'s':''})</button>}
+        </div>
+      )}
+      {phase==='question'&&(
+        <div style={{width:'100%',maxWidth:480,display:'flex',flexDirection:'column',gap:14}}>
+          <div style={{background:questionType==='truth'?'linear-gradient(135deg,rgba(0,245,212,0.08),rgba(76,201,240,0.05))':'linear-gradient(135deg,rgba(255,0,110,0.08),rgba(123,47,255,0.05))',border:`1.5px solid ${questionType==='truth'?'rgba(0,245,212,0.25)':'rgba(255,0,110,0.25)'}`,borderRadius:20,padding:'24px 22px',position:'relative'}}>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:14,fontSize:'0.8rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.08em',color:questionType==='truth'?'var(--cyan)':'var(--pink)'}}>{questionType==='truth'?'💭 VERDAD':'⚡ RETO'}</div>
+            <p style={{fontSize:'clamp(1rem,4vw,1.15rem)',lineHeight:1.6,fontWeight:700,color:'var(--white)'}}>{currentQuestion}</p>
+            {questionType==='dare'&&!timerActive&&timeLeft===30&&(<button onClick={startTimer} style={{position:'absolute',bottom:14,right:14,background:'rgba(255,214,10,0.15)',border:'1px solid rgba(255,214,10,0.3)',borderRadius:100,color:'var(--gold)',fontSize:'0.75rem',fontWeight:800,padding:'5px 12px',cursor:'pointer',display:'flex',alignItems:'center',gap:4}}>⚡ Reto relámpago (30s)</button>)}
+            {timerActive&&(<button onClick={stopTimer} style={{position:'absolute',bottom:14,right:14,background:'rgba(255,68,68,0.15)',border:'1px solid rgba(255,68,68,0.3)',borderRadius:100,color:'var(--danger)',fontSize:'0.75rem',fontWeight:800,padding:'5px 12px',cursor:'pointer'}}>⏹ Parar timer</button>)}
+            {!timerActive&&timeLeft<30&&timeLeft>0&&(<button onClick={startTimer} style={{position:'absolute',bottom:14,right:14,background:'rgba(0,245,212,0.15)',border:'1px solid rgba(0,245,212,0.3)',borderRadius:100,color:'var(--cyan)',fontSize:'0.75rem',fontWeight:800,padding:'5px 12px',cursor:'pointer'}}>▶ Reanudar ({timeLeft}s)</button>)}
+            {timeLeft===0&&(<div style={{position:'absolute',bottom:14,right:14,background:'rgba(255,68,68,0.2)',borderRadius:100,color:'var(--danger)',fontSize:'0.75rem',fontWeight:800,padding:'5px 12px',animation:'pulse 1s infinite'}}>⏰ ¡Tiempo!</div>)}
+          </div>
+          <div style={{display:'flex',gap:10}}>
+            <button className="btn btn-secondary" onClick={swapQuestion} disabled={swapsLeft<=0} style={{flex:1,fontSize:'0.85rem'}}>🔄 Buscar otro {swapsLeft>0?`(${swapsLeft})`:'✗'}</button>
+            <button className="btn" onClick={handleSkip} disabled={globalSkipsLeft<=0} style={{flex:1,fontSize:'0.85rem',background:'rgba(255,255,255,0.06)',color:globalSkipsLeft>0?'var(--white)':'var(--gray)',border:'1.5px solid var(--border)'}}>⏭️ Saltar {globalSkipsLeft>0?`(${globalSkipsLeft})`:'✗'}</button>
+          </div>
+          {player.wildcard&&<button className="btn btn-gold btn-full" onClick={()=>setShowWildcardConfirm(true)}>🃏 Usar Comodín — escapar sin cumplir</button>}
+          <button className="btn btn-primary btn-full btn-lg" onClick={handleDone}>✅ ¡Terminé! →</button>
+          <div className="card" style={{padding:'14px 16px'}}>
+            <p style={{fontSize:'0.78rem',color:'var(--gray)',fontWeight:700,marginBottom:10,textTransform:'uppercase',letterSpacing:'0.08em'}}>Reacciones de los demás</p>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+              {REACTION_EMOJIS.map(emoji=>(<button key={emoji} onClick={(e)=>addReaction(emoji,e)} style={{background:'rgba(255,255,255,0.06)',border:'1px solid var(--border)',borderRadius:12,padding:'8px 14px',fontSize:'1.3rem',cursor:'pointer',transition:'all 0.15s ease'}} onMouseEnter={e=>{e.currentTarget.style.transform='scale(1.2)';}} onMouseLeave={e=>{e.currentTarget.style.transform='';}}>{emoji}</button>))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── RESULT SCREEN ─────────────────────────────────────────
+function ResultScreen({ player, turnInfo, players, onResult }) {
+  const [answered, setAnswered] = useState(false);
+  const [completed, setCompleted] = useState(null);
+  const handleAnswer=(yes)=>{ setCompleted(yes); setAnswered(true); setTimeout(()=>onResult(yes),1200); };
+  if(!player||!turnInfo) return null;
+  const typeLabel=turnInfo.questionType==='truth'?'💭 Verdad':'⚡ Reto';
+  return (
+    <div className="screen" style={{justifyContent:'center',minHeight:'100vh'}}>
+      <div style={{width:'100%',maxWidth:460,textAlign:'center'}}>
+        <div style={{marginBottom:28}}><div style={{fontSize:'4rem',marginBottom:8,filter:'drop-shadow(0 0 16px rgba(255,0,110,0.5))',animation:'float 3s ease-in-out infinite'}}>{player.emoji}</div><h2 className="h2 grad-text">{player.name}</h2></div>
+        {turnInfo.question&&(<div className="card" style={{marginBottom:24,padding:'18px 20px',textAlign:'left',borderColor:'rgba(255,255,255,0.12)'}}><div style={{fontSize:'0.75rem',fontWeight:800,color:'var(--gray)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8}}>{typeLabel}</div><p style={{lineHeight:1.6,fontWeight:700,fontSize:'0.95rem',color:'var(--white)'}}>{turnInfo.question}</p></div>)}
+        {!answered&&(<><h1 className="h1 grad-text" style={{fontSize:'clamp(1.8rem,7vw,2.5rem)',marginBottom:8}}>¿Lo cumpliste?</h1><p className="subtitle" style={{marginBottom:32}}>Voten todos de forma honesta 👀</p><div style={{display:'flex',gap:14}}><button className="btn btn-full" onClick={()=>handleAnswer(true)} style={{flex:1,padding:'28px 16px',background:'linear-gradient(135deg,#06d6a0,#00f5d4)',color:'#060613',borderRadius:20,flexDirection:'column',gap:8,fontSize:'1rem',fontFamily:'Bungee',boxShadow:'0 0 30px rgba(6,214,160,0.35)'}}><span style={{fontSize:'2.5rem',display:'block'}}>✅</span>SÍ<br/><span style={{fontSize:'0.75rem',fontFamily:'Nunito',opacity:0.8}}>+1 punto</span></button><button className="btn btn-full" onClick={()=>handleAnswer(false)} style={{flex:1,padding:'28px 16px',background:'linear-gradient(135deg,#ff4444,#ff006e)',color:'#fff',borderRadius:20,flexDirection:'column',gap:8,fontSize:'1rem',fontFamily:'Bungee',boxShadow:'0 0 30px rgba(255,68,68,0.35)'}}><span style={{fontSize:'2.5rem',display:'block'}}>❌</span>NO<br/><span style={{fontSize:'0.75rem',fontFamily:'Nunito',opacity:0.8}}>0 puntos</span></button></div></>)}
+        {answered&&(<div style={{animation:'spinIn 0.5s cubic-bezier(0.34,1.56,0.64,1)'}}><div style={{fontSize:'5rem',marginBottom:12}}>{completed?'🎉':'😅'}</div><h2 className="h2" style={{color:completed?'var(--cyan)':'var(--pink)'}}>{completed?'¡Lo logró!':'¡No lo hizo!'}</h2><p style={{color:'var(--gray)',marginTop:8,fontWeight:700}}>{completed?`+1 punto para ${player.name}`:'Sin puntos esta vez'}</p></div>)}
+      </div>
+    </div>
+  );
+}
+
+// ── FINAL GAME SCREEN ─────────────────────────────────────
+// Fases: veredicto → winner_picks → ruleta → duelo → campeon
+function FinalGameScreen({ players, onRestart, onNewGame }) {
+  const sorted = [...players].sort((a,b)=>b.points-a.points);
+  const winner = sorted[0];
+  const condenados = sorted.slice(1);           // todos menos el 1ro
+  const duelPair = [sorted[sorted.length-2], sorted[sorted.length-1]].filter(Boolean); // últimos 2
+  const hasDuel = sorted.length >= 3;           // duelo solo si hay 3+ jugadores
+
+  const [fase, setFase] = useState('veredicto');
+  const [confetti, setConfetti] = useState(false);
+
+  // winner_picks state
+  const [condIdx, setCondIdx] = useState(0);    // índice del condenado actual
+  const [pickedLevel, setPickedLevel] = useState(null);
+  const [wpQuestion, setWpQuestion] = useState('');
+
+  // ruleta state
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [spinDisplay, setSpinDisplay] = useState(0);
+  const [spinResult, setSpinResult] = useState(null);
+  const [ruletaLevel, setRuletaLevel] = useState(null);
+  const [ruletaQuestion, setRuletaQuestion] = useState('');
+  const spinRef = useRef(null);
+
+  // duelo state
+  const [duelRound, setDuelRound] = useState(0);   // 0 o 1 (quién va)
+  const [duelQ, setDuelQ] = useState('');
+  const [duelResults, setDuelResults] = useState([]); // {player, completed}
+  const [duelCount, setDuelCount] = useState(0);    // rondas completadas
+
+  useEffect(()=>{
+    if(fase==='veredicto'||fase==='campeon'){
+      setTimeout(()=>setConfetti(true),300);
+      setTimeout(()=>setConfetti(false),4500);
+    }
+  },[fase]);
+
+  // ── Spinner de la ruleta ──────────────────────────────
+  const spinRuleta = () => {
+    if(isSpinning) return;
+    setIsSpinning(true); setSpinResult(null); setRuletaLevel(null); setRuletaQuestion('');
+    const target = Math.floor(Math.random()*condenados.length);
+    let count=0; const total=30;
+    const step=()=>{
+      count++;
+      setSpinDisplay(Math.floor(Math.random()*condenados.length));
+      const delay = 80 + Math.pow(count/total,2)*500;
+      if(count<total){ spinRef.current=setTimeout(step,delay); }
+      else { setSpinDisplay(target); setSpinResult(target); setIsSpinning(false); }
+    };
+    spinRef.current=setTimeout(step,80);
+  };
+  useEffect(()=>()=>{ if(spinRef.current) clearTimeout(spinRef.current); },[]);
+
+  const titles = (rank) => {
+    if(rank===0) return { title:'👑 El Intocable', color:'var(--gold)' };
+    if(rank===1&&sorted.length>2) return { title:'😏 El Casi', color:'#c0c0c0' };
+    if(rank===sorted.length-1) return { title:'💀 El Condenado #1', color:'var(--danger)' };
+    return { title:`💀 Condenado #${rank}`, color:'var(--pink)' };
+  };
+
+  // ── VEREDICTO ─────────────────────────────────────────
+  if(fase==='veredicto') return (
+    <div className="screen" style={{paddingTop:28}}>
+      <Confetti active={confetti}/>
+      <div style={{textAlign:'center',marginBottom:20}}>
+        <div style={{fontSize:'3.5rem',filter:'drop-shadow(0 0 20px rgba(255,214,10,0.7))',animation:'bounce 1s ease 0.5s',display:'inline-block'}}>🏆</div>
+        <h1 className="h1 grad-text-gold" style={{marginTop:8}}>¡FIN DEL JUEGO!</h1>
+        <p className="subtitle" style={{marginTop:6}}>Resultados y veredictos finales</p>
+      </div>
+      {/* Tabla con títulos */}
+      <div style={{width:'100%',maxWidth:420,marginBottom:20}}>
+        {sorted.map((p,i)=>{
+          const t=titles(i);
+          return (
+            <div key={p.id} className="card" style={{display:'flex',alignItems:'center',gap:12,marginBottom:10,padding:'14px 18px',borderColor:i===0?'rgba(255,214,10,0.4)':i===sorted.length-1?'rgba(255,68,68,0.3)':'rgba(255,255,255,0.08)',background:i===0?'rgba(255,214,10,0.08)':i===sorted.length-1?'rgba(255,68,68,0.06)':'rgba(255,255,255,0.03)',animation:`screenIn 0.4s ease ${i*0.1}s both`}}>
+              <span style={{fontSize:'1.4rem',minWidth:34}}>{i<3?MEDALS[i]:`${i+1}.`}</span>
+              <span style={{fontSize:'1.4rem'}}>{p.emoji}</span>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:800}}>{p.name}</div>
+                <div style={{fontSize:'0.75rem',color:t.color,fontWeight:800,marginTop:2}}>{t.title}</div>
+              </div>
+              <div style={{textAlign:'right'}}>
+                <div style={{fontFamily:'Bungee',fontSize:'1.3rem',color:i===0?'var(--gold)':'var(--white)'}}>{p.points}</div>
+                <div style={{fontSize:'0.7rem',color:'var(--gray)'}}>puntos</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{width:'100%',maxWidth:420,display:'flex',flexDirection:'column',gap:10}}>
+        {condenados.length>0&&(
+          <div className="card" style={{background:'rgba(255,0,110,0.06)',borderColor:'rgba(255,0,110,0.3)',padding:'16px 20px',textAlign:'center',marginBottom:4}}>
+            <div style={{fontSize:'1.6rem',marginBottom:6}}>⚔️</div>
+            <h3 style={{color:'var(--pink)',marginBottom:4}}>¡Juego Final!</h3>
+            <p style={{color:'var(--gray)',fontSize:'0.85rem',lineHeight:1.5}}>
+              <strong style={{color:'var(--gold)'}}>{winner.emoji} {winner.name}</strong> tiene el poder absoluto.<br/>Los condenados recibirán sus castigos.
+            </p>
+          </div>
+        )}
+        {condenados.length>0
+          ? <button className="btn btn-primary btn-full btn-lg" onClick={()=>{ setCondIdx(0); setPickedLevel(null); setWpQuestion(''); setFase('winner_picks'); }}>⚔️ ¡Iniciar Juego Final!</button>
+          : <button className="btn btn-primary btn-full btn-lg" onClick={()=>setFase('campeon')}>🏆 ¡Ver Campeón!</button>
+        }
+        <button className="btn btn-secondary btn-full" onClick={onNewGame}>🎯 Nueva partida</button>
+        <button className="btn btn-ghost btn-full" onClick={onRestart}>🔄 Empezar de cero</button>
+      </div>
+    </div>
+  );
+
+  // ── WINNER PICKS ──────────────────────────────────────
+  const currentCond = condenados[condIdx];
+  if(fase==='winner_picks') return (
+    <div className="screen" style={{paddingTop:24}}>
+      <div style={{width:'100%',maxWidth:440}}>
+        {/* Header */}
+        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:20,padding:'14px 18px',background:'rgba(255,214,10,0.08)',border:'1.5px solid rgba(255,214,10,0.3)',borderRadius:16}}>
+          <div style={{fontSize:'2rem'}}>{winner.emoji}</div>
+          <div><div style={{fontFamily:'Bungee',fontSize:'0.95rem',color:'var(--gold)'}}>👑 {winner.name} — El Intocable</div><div style={{fontSize:'0.78rem',color:'var(--gray)',fontWeight:600}}>Elige el nivel del castigo</div></div>
+          <div style={{marginLeft:'auto',fontSize:'0.78rem',fontWeight:800,color:'var(--gray)'}}>{condIdx+1}/{condenados.length}</div>
+        </div>
+
+        {/* Condenado actual */}
+        <div style={{textAlign:'center',marginBottom:20}}>
+          <div style={{fontSize:'3rem',marginBottom:6}}>{currentCond?.emoji}</div>
+          <h2 className="h2 grad-text">{currentCond?.name}</h2>
+          <p style={{color:'var(--danger)',fontSize:'0.85rem',fontWeight:800,marginTop:4}}>💀 Condenado — recibe su castigo</p>
+          <div style={{display:'flex',gap:8,justifyContent:'center',marginTop:8}}>
+            <span className="badge badge-gold">{currentCond?.points} pts</span>
+          </div>
+        </div>
+
+        {!pickedLevel ? (
+          <>
+            <p style={{textAlign:'center',color:'var(--gray)',fontSize:'0.9rem',fontWeight:600,marginBottom:14}}>
+              <strong style={{color:'var(--gold)'}}>{winner.name}</strong>, elige qué nivel le toca:
+            </p>
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              {['suave','atrevido','adulto'].map(lvl=>{
+                const info=LEVEL_INFO[lvl];
+                return (
+                  <button key={lvl} onClick={()=>{ setPickedLevel(lvl); setWpQuestion(randomQ(lvl,Math.random()<0.5?'truth':'dare')); }}
+                    style={{display:'flex',alignItems:'center',gap:14,padding:'16px 20px',background:`${info.color}10`,border:`2px solid ${info.color}50`,borderRadius:14,cursor:'pointer',transition:'all 0.2s',width:'100%'}}
+                    onMouseEnter={e=>{e.currentTarget.style.background=`${info.color}20`;e.currentTarget.style.transform='translateY(-2px)';}}
+                    onMouseLeave={e=>{e.currentTarget.style.background=`${info.color}10`;e.currentTarget.style.transform='';}}>
+                    <span style={{fontSize:'1.8rem'}}>{info.emoji}</span>
+                    <div style={{flex:1,textAlign:'left'}}>
+                      <div style={{fontFamily:'Bungee',fontSize:'1rem',color:info.color}}>{info.label}</div>
+                      <div style={{fontSize:'0.78rem',color:'var(--gray)',fontWeight:600}}>{info.description}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{background:`${LEVEL_INFO[pickedLevel].color}12`,border:`1.5px solid ${LEVEL_INFO[pickedLevel].color}50`,borderRadius:18,padding:'20px 22px',marginBottom:14}}>
+              <div style={{fontSize:'0.75rem',fontWeight:800,color:LEVEL_INFO[pickedLevel].color,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:10}}>{LEVEL_INFO[pickedLevel].emoji} Nivel {LEVEL_INFO[pickedLevel].label}</div>
+              <p style={{fontSize:'1.05rem',lineHeight:1.6,fontWeight:700,color:'var(--white)'}}>{wpQuestion}</p>
+              <p style={{fontSize:'0.75rem',color:'var(--gray)',marginTop:10,fontWeight:600}}>💡 <strong style={{color:LEVEL_INFO[pickedLevel].color}}>{winner.name}</strong> decide los detalles exactos</p>
+            </div>
+            <div style={{display:'flex',gap:10}}>
+              <button className="btn btn-secondary" onClick={()=>{setPickedLevel(null);setWpQuestion('');}} style={{flex:1}}>← Cambiar nivel</button>
+              <button className="btn btn-primary" onClick={()=>{
+                if(condIdx<condenados.length-1){ setCondIdx(i=>i+1); setPickedLevel(null); setWpQuestion(''); }
+                else { setFase(hasDuel?'ruleta':'campeon'); }
+              }} style={{flex:2}}>
+                {condIdx<condenados.length-1 ? 'Siguiente →' : hasDuel ? '🎰 Ruleta de Castigos →' : '🏆 Ver Campeón →'}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  // ── RULETA DE CASTIGOS ────────────────────────────────
+  if(fase==='ruleta') return (
+    <div className="screen" style={{paddingTop:28}}>
+      <div style={{width:'100%',maxWidth:440,textAlign:'center'}}>
+        <div style={{fontSize:'3rem',marginBottom:8}}>🎰</div>
+        <h2 className="h2 grad-text" style={{marginBottom:4}}>Ruleta de Castigos</h2>
+        <p className="subtitle" style={{marginBottom:24}}>Los condenados giran por el castigo más intenso de la noche</p>
+
+        {/* Spinner visual */}
+        <div style={{margin:'0 auto 24px',width:200,height:200,borderRadius:'50%',background:'rgba(255,0,110,0.08)',border:'3px solid rgba(255,0,110,0.3)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',boxShadow:isSpinning?'0 0 60px rgba(255,0,110,0.4)':'0 0 20px rgba(255,0,110,0.15)',transition:'box-shadow 0.3s',position:'relative'}}>
+          {spinResult===null ? (
+            <>
+              <div style={{fontSize:'2.5rem',marginBottom:6,transition:'all 0.1s'}}>{condenados[isSpinning?spinDisplay:0]?.emoji||'?'}</div>
+              <div style={{fontFamily:'Bungee',fontSize:'0.9rem',color:'var(--pink)',maxWidth:140,textAlign:'center'}}>{condenados[isSpinning?spinDisplay:0]?.name||'...'}</div>
+            </>
+          ) : (
+            <div style={{animation:'spinIn 0.5s cubic-bezier(0.34,1.56,0.64,1)'}}>
+              <div style={{fontSize:'2.8rem',marginBottom:6}}>{condenados[spinResult]?.emoji}</div>
+              <div style={{fontFamily:'Bungee',fontSize:'1rem',color:'var(--pink)'}}>{condenados[spinResult]?.name}</div>
+              <div style={{fontSize:'0.75rem',color:'var(--danger)',fontWeight:800,marginTop:4}}>¡Le tocó!</div>
+            </div>
+          )}
+        </div>
+
+        {!isSpinning&&spinResult===null&&(
+          <>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center',marginBottom:16}}>
+              {condenados.map((p,i)=>(<span key={p.id} style={{display:'flex',alignItems:'center',gap:5,padding:'5px 12px',background:'rgba(255,0,110,0.08)',border:'1px solid rgba(255,0,110,0.2)',borderRadius:100,fontSize:'0.82rem',fontWeight:700}}>{p.emoji} {p.name}</span>))}
+            </div>
+            <button className="btn btn-primary btn-full btn-lg" onClick={spinRuleta}>🎰 ¡Girar!</button>
+          </>
+        )}
+        {isSpinning&&<div className="btn btn-primary btn-full btn-lg pulse" style={{cursor:'default'}}>🎰 Girando...</div>}
+
+        {spinResult!==null&&!ruletaLevel&&(
+          <>
+            <div className="card" style={{background:'rgba(255,0,110,0.08)',borderColor:'rgba(255,0,110,0.3)',padding:'14px 18px',marginBottom:14,textAlign:'left'}}>
+              <p style={{color:'var(--gold)',fontWeight:800,marginBottom:4}}>👑 {winner.name} elige el nivel del reto máximo:</p>
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              {['suave','atrevido','adulto'].map(lvl=>{
+                const info=LEVEL_INFO[lvl];
+                return (
+                  <button key={lvl} onClick={()=>{ setRuletaLevel(lvl); setRuletaQuestion(randomQ(lvl,'dare')); }}
+                    style={{display:'flex',alignItems:'center',gap:14,padding:'14px 18px',background:`${info.color}10`,border:`2px solid ${info.color}50`,borderRadius:14,cursor:'pointer',width:'100%'}}
+                    onMouseEnter={e=>{e.currentTarget.style.background=`${info.color}20`;}}
+                    onMouseLeave={e=>{e.currentTarget.style.background=`${info.color}10`;}}>
+                    <span style={{fontSize:'1.6rem'}}>{info.emoji}</span>
+                    <div style={{fontFamily:'Bungee',fontSize:'1rem',color:info.color}}>{info.label}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {ruletaLevel&&ruletaQuestion&&(
+          <>
+            <div style={{background:`${LEVEL_INFO[ruletaLevel].color}12`,border:`1.5px solid ${LEVEL_INFO[ruletaLevel].color}50`,borderRadius:18,padding:'20px 22px',marginBottom:14,textAlign:'left'}}>
+              <div style={{fontSize:'0.75rem',fontWeight:800,color:LEVEL_INFO[ruletaLevel].color,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:10}}>🎰 RETO MÁXIMO · {LEVEL_INFO[ruletaLevel].label}</div>
+              <p style={{fontSize:'1.05rem',lineHeight:1.6,fontWeight:700,color:'var(--white)'}}>{ruletaQuestion}</p>
+              <p style={{fontSize:'0.75rem',color:'var(--gray)',marginTop:10,fontWeight:600}}>💡 <strong style={{color:'var(--gold)'}}>{winner.name}</strong> decide los detalles exactos</p>
+            </div>
+            <button className="btn btn-primary btn-full btn-lg" onClick={()=>setFase('duelo')}>⚔️ El Duelo Final →</button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  // ── DUELO FINAL ───────────────────────────────────────
+  const duelPlayer = duelPair[duelRound%2];
+  const otherDuelPlayer = duelPair[(duelRound+1)%2];
+  if(fase==='duelo') return (
+    <div className="screen" style={{paddingTop:24}}>
+      <div style={{width:'100%',maxWidth:440}}>
+        <div style={{textAlign:'center',marginBottom:20}}>
+          <div style={{fontSize:'2.5rem',marginBottom:6}}>⚔️</div>
+          <h2 className="h2 grad-text">El Duelo Final</h2>
+          <p className="subtitle" style={{marginTop:4}}>Los últimos 2 se enfrentan. El grupo decide quién fue más valiente.</p>
+        </div>
+
+        {/* Duelistas */}
+        <div style={{display:'flex',gap:12,alignItems:'center',marginBottom:20,padding:'14px 18px',background:'rgba(255,255,255,0.03)',borderRadius:16,border:'1px solid var(--border)'}}>
+          {duelPair.map((p,i)=>(
+            <div key={p.id} style={{flex:1,textAlign:'center',opacity:duelResults.filter(r=>r.id===p.id).length>=2?0.5:1}}>
+              <div style={{fontSize:'2rem',marginBottom:4,filter:duelRound%2===i?'drop-shadow(0 0 10px rgba(255,0,110,0.6))':'none'}}>{p.emoji}</div>
+              <div style={{fontFamily:'Bungee',fontSize:'0.85rem',color:duelRound%2===i?'var(--pink)':'var(--gray)'}}>{p.name}</div>
+              <div style={{fontSize:'0.7rem',color:'var(--gold)',fontWeight:800}}>{p.points} pts</div>
+              {duelRound%2===i&&<div style={{fontSize:'0.65rem',color:'var(--pink)',fontWeight:900,marginTop:3}}>👈 Su turno</div>}
+            </div>
+          ))}
+          <div style={{fontSize:'1.2rem',fontFamily:'Bungee',color:'var(--gray)'}}>VS</div>
+        </div>
+
+        {duelCount<4 ? (
+          !duelQ ? (
+            <>
+              <p style={{textAlign:'center',color:'var(--gold)',fontWeight:800,fontSize:'0.9rem',marginBottom:14}}>
+                Ronda {Math.floor(duelCount/2)+1} — Turno de <strong>{duelPlayer?.emoji} {duelPlayer?.name}</strong>
+              </p>
+              <div style={{display:'flex',gap:12}}>
+                <button className="btn btn-full" onClick={()=>setDuelQ(randomQ('adulto','truth'))} style={{flex:1,padding:'20px 12px',background:'linear-gradient(135deg,#00f5d4,#4cc9f0)',color:'#060613',borderRadius:16,flexDirection:'column',gap:6,fontFamily:'Bungee',fontSize:'0.9rem'}}><span style={{fontSize:'1.8rem',display:'block'}}>💭</span>VERDAD</button>
+                <button className="btn btn-full" onClick={()=>setDuelQ(randomQ('adulto','dare'))} style={{flex:1,padding:'20px 12px',background:'var(--grad-main)',color:'#fff',borderRadius:16,flexDirection:'column',gap:6,fontFamily:'Bungee',fontSize:'0.9rem'}}><span style={{fontSize:'1.8rem',display:'block'}}>⚡</span>RETO</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{background:'linear-gradient(135deg,rgba(255,0,110,0.08),rgba(123,47,255,0.05))',border:'1.5px solid rgba(255,0,110,0.25)',borderRadius:18,padding:'20px 22px',marginBottom:14}}>
+                <p style={{fontSize:'1.05rem',lineHeight:1.6,fontWeight:700,color:'var(--white)'}}>{duelQ}</p>
+              </div>
+              <div style={{display:'flex',gap:10}}>
+                <button className="btn btn-full" onClick={()=>{ setDuelResults(prev=>[...prev,{id:duelPlayer.id,completed:true}]); setDuelRound(r=>r+1); setDuelCount(c=>c+1); setDuelQ(''); }}
+                  style={{flex:1,background:'linear-gradient(135deg,#06d6a0,#00f5d4)',color:'#060613',borderRadius:14,padding:'14px',fontFamily:'Bungee',fontSize:'0.85rem'}}>✅ Lo hizo</button>
+                <button className="btn btn-full" onClick={()=>{ setDuelResults(prev=>[...prev,{id:duelPlayer.id,completed:false}]); setDuelRound(r=>r+1); setDuelCount(c=>c+1); setDuelQ(''); }}
+                  style={{flex:1,background:'linear-gradient(135deg,#ff4444,#ff006e)',color:'#fff',borderRadius:14,padding:'14px',fontFamily:'Bungee',fontSize:'0.85rem'}}>❌ No lo hizo</button>
+              </div>
+            </>
+          )
+        ) : (
+          // Resultado del duelo
+          (() => {
+            const score = (p) => duelResults.filter(r=>r.id===p.id&&r.completed).length;
+            const s0=score(duelPair[0]); const s1=score(duelPair[1]);
+            const duelWinner = s0>s1?duelPair[0]:s1>s0?duelPair[1]:null;
+            return (
+              <div style={{textAlign:'center',animation:'spinIn 0.5s cubic-bezier(0.34,1.56,0.64,1)'}}>
+                <div style={{fontSize:'3rem',marginBottom:8}}>🔥</div>
+                <h3 style={{marginBottom:8,color:'var(--white)'}}>{duelWinner?`¡${duelWinner.emoji} ${duelWinner.name} ganó el duelo!`:'¡Empate épico!'}</h3>
+                <div style={{display:'flex',gap:14,justifyContent:'center',marginBottom:20}}>
+                  {duelPair.map(p=>(<div key={p.id} style={{textAlign:'center'}}><div style={{fontSize:'1.6rem'}}>{p.emoji}</div><div style={{fontWeight:800,fontSize:'0.85rem'}}>{p.name}</div><div style={{fontFamily:'Bungee',color:'var(--cyan)'}}>{score(p)}/2</div></div>))}
+                </div>
+                <button className="btn btn-primary btn-full btn-lg" onClick={()=>setFase('campeon')}>👑 Ver Campeón Final →</button>
+              </div>
+            );
+          })()
+        )}
+      </div>
+    </div>
+  );
+
+  // ── CAMPEÓN ───────────────────────────────────────────
+  if(fase==='campeon') return (
+    <div className="screen" style={{justifyContent:'center',paddingTop:40}}>
+      <Confetti active={confetti}/>
+      <div style={{textAlign:'center',width:'100%',maxWidth:420}}>
+        <div style={{fontSize:'5rem',marginBottom:8,animation:'bounce 0.8s ease infinite',filter:'drop-shadow(0 0 24px rgba(255,214,10,0.8))'}}>👑</div>
+        <h1 className="h1 grad-text-gold" style={{marginBottom:6}}>¡CAMPEÓN!</h1>
+        <div style={{fontSize:'4rem',marginBottom:8}}>{winner.emoji}</div>
+        <h2 className="h2" style={{marginBottom:4}}>{winner.name}</h2>
+        <p style={{color:'var(--gold)',fontWeight:800,fontSize:'1.1rem',marginBottom:6}}>{winner.points} puntos</p>
+        <p style={{color:'var(--gray)',fontWeight:700,fontSize:'0.9rem',marginBottom:32}}>👑 El Intocable — Nadie lo pudo vencer</p>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <button className="btn btn-primary btn-full btn-lg" onClick={onNewGame}>🎯 Nueva partida (mismos jugadores)</button>
+          <button className="btn btn-secondary btn-full" onClick={onRestart}>🔄 Empezar de cero</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return null;
+}
+
+// ── APP ───────────────────────────────────────────────────
+function App() {
+  const [screen, setScreen] = useState('players');
+  const [players, setPlayers] = useState([]);
+  const [gameMode, setGameMode] = useState(null);          // 'aleatorio' | 'manual'
+  const [randomLevels, setRandomLevels] = useState(['suave','atrevido','adulto']); // niveles activos en aleatorio
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(null);
+  const [lastPlayerIndex, setLastPlayerIndex] = useState(null);
+  const [globalSkipsLeft, setGlobalSkipsLeft] = useState(GLOBAL_SKIPS);
+  const [turnInfo, setTurnInfo] = useState(null);
+  const [showPro, setShowPro] = useState(false);
+
+  const toggleLevel = useCallback((lvl) => {
+    setRandomLevels(prev => {
+      if(prev.includes(lvl) && prev.length<=1) return prev; // mínimo 1
+      return prev.includes(lvl) ? prev.filter(l=>l!==lvl) : [...prev,lvl];
+    });
+  }, []);
+
+  const handlePlayersReady = useCallback((pl) => { setPlayers(pl); setGlobalSkipsLeft(GLOBAL_SKIPS); setScreen('mode'); }, []);
+  const handleModeSelect = useCallback((mode) => { setGameMode(mode); setScreen('roulette'); }, []);
+  const handlePlayerSpun = useCallback((idx) => {
+    setCurrentPlayerIndex(idx); setLastPlayerIndex(idx);
+    setPlayers(prev => prev.map((p,i) => i===idx ? {...p, timesSpun:p.timesSpun+1} : p));
+    setScreen('truthordare');
+  }, []);
+  const handleTurnDone = useCallback((info) => {
+    setTurnInfo(info);
+    if(info.usedWildcard || info.skipped) {
+      if(info.usedWildcard) setPlayers(prev => prev.map((p,i) => i===currentPlayerIndex ? {...p, wildcard:false} : p));
+      if(info.skipped) setGlobalSkipsLeft(prev => Math.max(0, prev-1));
+      setScreen('roulette');
+    } else setScreen('result');
+  }, [currentPlayerIndex]);
+  const handleResult = useCallback((completed) => {
+    setPlayers(prev => prev.map((p,i) => i===currentPlayerIndex ? {...p, points:completed?p.points+1:p.points} : p));
+    setScreen('roulette');
+  }, [currentPlayerIndex]);
+  const handleEndGame = useCallback(() => setScreen('podium'), []);
+  const handleRestart = useCallback(() => { setPlayers([]); setGameMode(null); setCurrentPlayerIndex(null); setLastPlayerIndex(null); setGlobalSkipsLeft(GLOBAL_SKIPS); setTurnInfo(null); setScreen('players'); }, []);
+  const handleNewGame = useCallback(() => { setPlayers(prev => prev.map(p => ({...p, points:0, timesSpun:0, wildcard:true}))); setGameMode(null); setCurrentPlayerIndex(null); setLastPlayerIndex(null); setGlobalSkipsLeft(GLOBAL_SKIPS); setTurnInfo(null); setScreen('mode'); }, []);
+
+  return (
+    <>
+      <ProModal open={showPro} onClose={()=>setShowPro(false)} randomLevels={randomLevels} onToggleLevel={toggleLevel} />
+      {(() => {
+        switch(screen) {
+          case 'players':    return <PlayersScreen onReady={handlePlayersReady} createPlayer={createPlayer} onOpenPro={()=>setShowPro(true)} />;
+          case 'mode':       return <ModeScreen onSelect={handleModeSelect} onBack={()=>setScreen('players')} />;
+          case 'roulette':   return <RouletteScreen players={players} lastPlayerIndex={lastPlayerIndex} onPlayerSpun={handlePlayerSpun} onEndGame={handleEndGame} />;
+          case 'truthordare':return <TruthOrDareScreen player={players[currentPlayerIndex]} playerIndex={currentPlayerIndex} players={players} gameMode={gameMode} randomLevels={randomLevels} globalSkipsLeft={globalSkipsLeft} onDone={handleTurnDone} />;
+          case 'result':     return <ResultScreen player={players[currentPlayerIndex]} turnInfo={turnInfo} players={players} onResult={handleResult} />;
+          case 'podium':     return <FinalGameScreen players={players} onRestart={handleRestart} onNewGame={handleNewGame} />;
+          default: return null;
+        }
+      })()}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
