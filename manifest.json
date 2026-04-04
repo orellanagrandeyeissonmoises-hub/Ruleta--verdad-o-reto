@@ -1,12 +1,10 @@
 {
-  "name": "Juegos Claude",
-  "short_name": "Juegos",
-  "description": "Verdad o Reto, La Botella y El Impostor",
-  "start_url": "/index_ruleta.html",
+  "name": "Ruleta: Verdad o Reto",
+  "short_name": "Juego",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#060613",
   "theme_color": "#ff006e",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
