@@ -1,14 +1,12 @@
-const CACHE = 'juegos-v1';
+const CACHE = 'ruleta-v1';
 const ARCHIVOS = [
-  '/index_ruleta.html',
-  '/index_botella.html',
-  '/index_impostor.html',
-  '/preguntas-suave.js',
-  '/preguntas-atrevido.js',
-  '/preguntas-adulto.js',
-  '/sugerencias_botella.js',
-  '/logica_sugerencias.js',
-  '/categorias.js',
+  './index.html',
+  './preguntas-suave.js',
+  './preguntas-atrevido.js',
+  './preguntas-adulto.js',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
 ];
 
 self.addEventListener('install', e => {
