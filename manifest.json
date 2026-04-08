@@ -1,6 +1,6 @@
 {
   "name": "Ruleta: Verdad o Reto",
-  "short_name": "Juego",
+  "short_name": "Ruleta: V/R",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#060613",
